@@ -1,7 +1,4 @@
-# blank-template
-Blank Template (no webpack).
-Just to  get basic folder structure ready.
-Update it accordingly when using it.
-
+# Hashmap Project (Demo) - for The Odin Project
+Testing out knowledge of Hashmap (https://www.theodinproject.com/lessons/javascript-hashmap)
 
 Developed by Shaunak Basu / https://github.com/basushaunak
