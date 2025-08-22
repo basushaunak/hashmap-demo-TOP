@@ -12,12 +12,6 @@ class HashMap {
     console.log(hashTable);
   }
 
-  #checkLoad() {
-    if (this.#load / this.#capacity >= this.#criticalLoad) {
-      this.addCapacity();
-    }
-  }
-
   #hash(str, capacity) {
     // FNV offset basis
     let hash = 2166136261;
@@ -36,10 +30,26 @@ class HashMap {
   }
 
   #rehash(newCapacity) {
-    let newTable = new Array(newCapacity);
     //Rehash all the keys
+    for (let i = 0; i < this.#capacity; i++) {
+      if (this.hashTable[i]) {
+        let currentNode = this.hashTable[i].head;
+        while (currentNode) {
+          let index = this.#hash(currentNode.key, newCapacity);
+          this.set(
+            currentNode.key,
+            currentNode.value,
+            newTable,
+            newCapacity,
+            false
+          );
+          currentNode = currentNode.next;
+        }
+      }
+    }
 
     this.hashTable = newTable;
+    this.#capacity = newCapacity;
   }
 
   //set(key, value) takes two arguments: the first is a key, and the second is a value that is
@@ -56,26 +66,34 @@ class HashMap {
   // factor. The methods mentioned later in this assignment can help you handle the growth
   // logic, so you may want to implement this feature near the end. However, we mention this
   // with set() because it’s important to grow buckets exactly as they are being expanded.
-  set(key, value) {
-    let index = this.#hash(key, this.#capacity);
-    if (this.hashTable[index] === undefined) {
-      this.hashTable[index] = new LinkedList();
+  set(
+    key,
+    value,
+    hashTable = this.hashTable,
+    capacity = this.#capacity,
+    countLoad = true
+  ) {
+    let index = this.#hash(key, capacity);
+    if (hashTable[index] === undefined) {
+      hashTable[index] = new LinkedList();
+      if (countLoad) {
+        this.#load++;
+        if (this.#load / this.#capacity >= this.#criticalLoad) {
+          this.#addCapacity();
+        }
+      }
     }
-    let currentNode = this.hashTable[index].head;
-    while (currentNode.next) {
+    let currentNode = hashTable[index].head;
+    while (currentNode) {
       if (currentNode.key === key) {
-        break;
+        currentNode.value = value;
+        console.log(`Value of ${key} updated with ${value}`);
+        return true;
       }
       currentNode = currentNode.next;
     }
-    if (currentNode.key === key) {
-      currentNode.value === value;
-      console.log(`Value of ${key} updated with ${value}`);
-      return true;
-    } else {
-      this.hashTable[index].append(key, value);
-      return true;
-    }
+    hashTable[index].append(key, value);
+    return true;
   }
 
   //get(key) takes one argument as a key and returns the value that is assigned to this key.
