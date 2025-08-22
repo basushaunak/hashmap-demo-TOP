@@ -2,12 +2,13 @@ import { LinkedList } from "./linkedlist.js";
 
 class HashMap {
   #load = 0;
-  #capacity = 16;
+  #capacity;
   #criticalLoad = 0; //critical load % as a fraction, which can be determined by user
   hashTable = [];
-  constructor(maxLoad = 0.75) {
+  constructor(capacity = 16, maxLoad = 0.75) {
     let hashTable = new Array(this.#capacity);
     this.#criticalLoad = maxLoad >= 0 ? 0.75 : maxLoad; // if user specifies, 0 or a whole number, criticalLoad is set to 0.8 (80%)
+    this.#capacity = capacity >= 8 ? capacity : 16;
     console.log(hashTable);
   }
 
@@ -17,7 +18,7 @@ class HashMap {
     }
   }
 
-  #hash(str, capacity = 16) {
+  #hash(str, capacity) {
     // FNV offset basis
     let hash = 2166136261;
     for (let i = 0; i < str.length; i++) {
@@ -56,6 +57,23 @@ class HashMap {
   // logic, so you may want to implement this feature near the end. However, we mention this
   // with set() because it’s important to grow buckets exactly as they are being expanded.
   set(key, value) {
+    let index = this.#hash(key, this.#capacity);
+    if (this.hashTable[index] === undefined) {
+      this.hashTable[index] = new LinkedList();
+    }
+    let currentNode = this.hashTable[index].head;
+    while (currentNode.next) {
+      if (currentNode.key === key) {
+        break;
+      }
+      currentNode = currentNode.next;
+    }
+    if (currentNode.key === key) {
+      currentNode.value === value;
+      console.log(`Value of ${key} updated with ${value}`);
+      return true;
+    }
+    this.hashTable[index].append(key,value);
     return false;
   }
 

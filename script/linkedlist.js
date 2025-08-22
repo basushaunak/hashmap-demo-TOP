@@ -13,8 +13,10 @@
 
 class Node {
   #value;
+  key;
   #next;
-  constructor(value) {
+  constructor(key, value) {
+    this.key = key;
     this.#value = value;
     this.#next = null;
   }
@@ -63,13 +65,13 @@ export class LinkedList {
       counter++;
       currentNode = currentNode.next;
       if (counter === index) {
-        return currentNode.value;
+        return currentNode;
       }
     }
     return null;
   }
 
-  find(val) {
+  findValue(val) {
     if (this.size === 0) {
       return -2; // Not found, empty list
     }
@@ -78,24 +80,41 @@ export class LinkedList {
     while (counter < this.size) {
       // We are not using strict check as we want to allow users to enter any data type as value.
       if (currentNode.value == val) {
-        return counter;
+        return currentNode;
       }
       currentNode = currentNode.next;
       counter++;
     }
     return -1; //Not found
   }
-at(index){
-  if(index < 0 || index >= this.size){
-    return null;
+
+  findKey(key) {
+    if (this.size === 0) {
+      return -2; // Not found, empty list
+    }
+    let currentNode = this.head;
+    let counter = 0;
+    while (counter < this.size) {
+      // We are not using strict check as we want to allow users to enter any data type as value.
+      if (currentNode.key == key) {
+        return currentNode;
+      }
+      currentNode = currentNode.next;
+      counter++;
+    }
+    return -1; //Not found
   }
-  let currentNode = this.head;
-  for(let i=0;i<index;i++){
-    currentNode = currentNode.next;
+  at(index) {
+    if (index < 0 || index >= this.size) {
+      return null;
+    }
+    let currentNode = this.head;
+    for (let i = 0; i < index; i++) {
+      currentNode = currentNode.next;
+    }
+    return currentNode;
   }
-  return currentNode;
-}
-  contains(val) {
+  containsValue(val) {
     let currentNode = this.#head;
     while (currentNode.next) {
       if (currentNode.value == val) {
@@ -104,6 +123,19 @@ at(index){
       currentNode = currentNode.next;
     }
     if (currentNode.value == val) {
+      return true;
+    }
+    return false;
+  }
+  containsKey(key) {
+    let currentNode = this.#head;
+    while (currentNode.next) {
+      if (currentNode.key == key) {
+        return true;
+      }
+      currentNode = currentNode.next;
+    }
+    if (currentNode.key == key) {
       return true;
     }
     return false;
@@ -123,25 +155,25 @@ at(index){
     let returnArray = [];
     let currentNode = this.head;
     if (this.size === 0) {
-      return "null";
+      return null;
     }
 
     if (this.size === 1) {
-      returnArray.push(currentNode.value);
+      returnArray.push([currentNode.key,currentNode.value]);
       return returnArray;
     }
     while (currentNode.next) {
-      returnArray.push(currentNode.value);
+      returnArray.push([currentNode.key,currentNode.value]);
       currentNode = currentNode.next;
     }
-    returnArray.push(currentNode.value);
+    returnArray.push([currentNode.key,currentNode.value]);
     return returnArray;
   }
 
-  append(value) {
-    let newNode = new Node(value);
+  append(key, value) {
+    let newNode = new Node(key, value);
     if (!this.head) {
-      this.#head = new Node(value);
+      this.#head = newNode;
       this.#size++;
     } else {
       let currentNode = this.head;
@@ -154,33 +186,31 @@ at(index){
     return true;
   }
 
-  prepend(value) {
-    let newNode = new Node(value);
+  prepend(key,value) {
+    let newNode = new Node(key, value);
     newNode.next = this.#head;
     this.#head = newNode;
     this.#size++;
     return true;
   }
 
-  insertAt(val, index) {
+  insertAt(key, val, index) {
     if (index > this.size || index < 0) {
       return false;
     }
     if (index === 0) {
-      this.prepend(val);
+      this.prepend(key, val);
       return true;
     }
     if (index === this.size) {
-      this.append(val);
+      this.append(key, val);
       return true;
     }
     let counter = 0;
     let currentNode = this.head;
-    let tmpNode = new Node(val);
+    let tmpNode = new Node(key, val);
     while (currentNode.next) {
       if (counter === index - 1) {
-        console.log("Current Node: ", currentNode.value);
-        console.log("Next Node: ", currentNode.next.value);
         tmpNode.next = currentNode.next;
         currentNode.next = tmpNode;
         this.#size++;
@@ -231,7 +261,6 @@ at(index){
     }
     while (currentNode.next) {
       if (index === this.size - 2) {
-        console.log("Index: ", index, "this.size-2: ", this.size - 1);
         currentNode.next = null;
         this.#size--;
         return true;
