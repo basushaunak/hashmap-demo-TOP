@@ -4,13 +4,12 @@ class HashMap {
   #load = 0;
   #capacity;
   #criticalLoad = 0; //critical load % as a fraction, which can be determined by user
-  hashTable = [];
+  #hashTable = [];
   constructor(capacity = 16, maxLoad = 0.75) {
-    let hashTable = new Array(this.#capacity);
-    this.#criticalLoad = maxLoad >= 0 ? 0.75 : maxLoad; // if user specifies, 0 or a whole number, criticalLoad is set to 0.8 (80%)
+    this.#criticalLoad = maxLoad >= 0 ? maxLoad: 0.75; // if user specifies, 0 or a whole number, criticalLoad is set to 0.8 (80%)
     this.#capacity = capacity >= 8 ? capacity : 16;
-    console.log(hashTable);
-  }
+    this.#hashTable = new Array(this.#capacity);
+    }
 
   #hash(str, capacity) {
     // FNV offset basis
@@ -31,9 +30,10 @@ class HashMap {
 
   #rehash(newCapacity) {
     //Rehash all the keys
+    let newTable = new Array(newCapacity);
     for (let i = 0; i < this.#capacity; i++) {
-      if (this.hashTable[i]) {
-        let currentNode = this.hashTable[i].head;
+      if (this.#hashTable[i]) {
+        let currentNode = this.#hashTable[i].head;
         while (currentNode) {
           let index = this.#hash(currentNode.key, newCapacity);
           this.set(
@@ -48,7 +48,7 @@ class HashMap {
       }
     }
 
-    this.hashTable = newTable;
+    this.#hashTable = newTable;
     this.#capacity = newCapacity;
   }
 
@@ -69,7 +69,7 @@ class HashMap {
   set(
     key,
     value,
-    hashTable = this.hashTable,
+    hashTable = this.#hashTable,
     capacity = this.#capacity,
     countLoad = true
   ) {
@@ -87,7 +87,6 @@ class HashMap {
     while (currentNode) {
       if (currentNode.key === key) {
         currentNode.value = value;
-        console.log(`Value of ${key} updated with ${value}`);
         return true;
       }
       currentNode = currentNode.next;
@@ -101,15 +100,15 @@ class HashMap {
   get(key) {
     let index = this.#hash(key, this.#capacity);
     if (
-      this.hashTable[index] === undefined ||
-      this.hashTable[index].size === 0
+      this.#hashTable[index] === undefined ||
+      this.#hashTable[index].size === 0
     ) {
       return null;
     }
     let node = null;
-    let idx = this.hashTable[index].findKey(key);
-    if (idx) {
-      node = this.hashTable[index].at(idx);
+    let idx = this.#hashTable[index].findKey(key);
+    if (idx !== -1) {
+      node = this.#hashTable[index].at(idx);
     }
     if (node) {
       return node.value;
@@ -120,11 +119,7 @@ class HashMap {
   //has(key) takes a key as an argument and returns true or false based on whether or not the
   // key is in the hash map.
   has(key) {
-    let index = this.#hash(key, this.#capacity);
-    if (this.hashTable[index].findKey(key)) {
-      return true;
-    }
-    return false;
+    return this.get(key) !== null;
   }
 
   //remove(key) takes a key as an argument. If the given key is in the hash map, it should
@@ -132,9 +127,9 @@ class HashMap {
   // should return false.
   remove(key) {
     let index = this.#hash(key, this.#capacity);
-    let idx = this.hashTable[index].findKey(key);
-    if (idx) {
-      return this.hashTable[index].removeAt(idx);
+    let idx = this.#hashTable[index].findKey(key);
+    if (idx !== -1) {
+      return this.#hashTable[index].removeAt(idx);
     }
     return false;
   }
@@ -143,8 +138,8 @@ class HashMap {
   length() {
     let size = 0;
     for (let i = 0; i < this.#capacity; i++) {
-      if (this.hashTable[i]) {
-        size += this.hashTable[i].size;
+      if (this.#hashTable[i]) {
+        size += this.#hashTable[i].size;
       }
     }
     return size;
@@ -153,8 +148,9 @@ class HashMap {
   //clear() removes all entries in the hash map.
   clear() {
     for (let i = 0; i < this.#capacity; i++) {
-      this.hashTable[i] = undefined;
+      this.#hashTable[i] = undefined;
     }
+    this.#load=0;
     return true;
   }
 
@@ -162,8 +158,8 @@ class HashMap {
   keys() {
     let masterArray = [];
     for (let i = 0; i < this.#capacity; i++) {
-      if (this.hashTable[i]) {
-        masterArray.push(...this.hashTable[i].toArrayKeys());
+      if (this.#hashTable[i]) {
+        masterArray.push(...this.#hashTable[i].toArrayKeys());
       }
     }
     return masterArray;
@@ -173,8 +169,8 @@ class HashMap {
   values() {
     let masterArray = [];
     for (let i = 0; i < this.#capacity; i++) {
-      if (this.hashTable[i]) {
-        masterArray.push(...this.hashTable[i].toArrayValues());
+      if (this.#hashTable[i]) {
+        masterArray.push(...this.#hashTable[i].toArrayValues());
       }
     }
     return masterArray;
@@ -185,8 +181,8 @@ class HashMap {
   entries() {
     let masterArray = [];
     for (let i = 0; i < this.#capacity; i++) {
-      if (this.hashTable[i]) {
-        masterArray.push(...this.hashTable[i].toArray());
+      if (this.#hashTable[i]) {
+        masterArray.push(...this.#hashTable[i].toArray());
       }
     }
     return masterArray;

@@ -58,19 +58,6 @@ export class LinkedList {
     return currentNode;
   }
 
-  at(index) {
-    let currentNode = this.head;
-    let counter = 0;
-    while (currentNode.next) {
-      counter++;
-      currentNode = currentNode.next;
-      if (counter === index) {
-        return currentNode;
-      }
-    }
-    return null;
-  }
-
   findValue(val) {
     if (this.size === 0) {
       return -2; // Not found, empty list
@@ -90,7 +77,7 @@ export class LinkedList {
 
   findKey(key) {
     if (this.size === 0) {
-      return false; // Not found, empty list
+      return -1; // Not found, empty list
     }
     let currentNode = this.head;
     let counter = 0;
@@ -102,7 +89,7 @@ export class LinkedList {
       currentNode = currentNode.next;
       counter++;
     }
-    return false; //Not found
+    return -1; //Not found
   }
   at(index) {
     if (index < 0 || index >= this.size) {
@@ -142,39 +129,39 @@ export class LinkedList {
   }
 
   toString() {
-    let valueArray = this.toArray();
-    let str = ``;
-    for (let i = 0; i < valueArray.length; i++) {
-      str += valueArray[i] + "=> ";
+    let str = "";
+    let currentNode = this.head;
+    while (currentNode) {
+      str += `( ${currentNode.key}: ${currentNode.value} ) -> `;
+      currentNode = currentNode.next;
     }
-    str += `null`;
-    return str;
+    return str + "null";
   }
 
   toArray() {
     let returnArray = [];
     let currentNode = this.head;
     if (this.size === 0) {
-      return null;
+      return [];
     }
 
     if (this.size === 1) {
-      returnArray.push([currentNode.key,currentNode.value]);
+      returnArray.push([currentNode.key, currentNode.value]);
       return returnArray;
     }
     while (currentNode.next) {
-      returnArray.push([currentNode.key,currentNode.value]);
+      returnArray.push([currentNode.key, currentNode.value]);
       currentNode = currentNode.next;
     }
-    returnArray.push([currentNode.key,currentNode.value]);
+    returnArray.push([currentNode.key, currentNode.value]);
     return returnArray;
   }
 
-    toArrayKeys() {
+  toArrayKeys() {
     let returnArray = [];
     let currentNode = this.head;
     if (this.size === 0) {
-      return null;
+      return [];
     }
 
     if (this.size === 1) {
@@ -189,11 +176,11 @@ export class LinkedList {
     return returnArray;
   }
 
-    toArrayValue() {
+  toArrayValues() {
     let returnArray = [];
     let currentNode = this.head;
     if (this.size === 0) {
-      return null;
+      return [];
     }
 
     if (this.size === 1) {
@@ -224,7 +211,7 @@ export class LinkedList {
     return true;
   }
 
-  prepend(key,value) {
+  prepend(key, value) {
     let newNode = new Node(key, value);
     newNode.next = this.#head;
     this.#head = newNode;
@@ -274,7 +261,7 @@ export class LinkedList {
       this.#size--;
       return true;
     }
-    while (index < this.#size) {
+    while (currentNode) {
       if (counter === index - 1) {
         currentNode.next = currentNode.next.next;
         this.#size--;
@@ -315,5 +302,6 @@ export class LinkedList {
     }
     this.#head = this.#head.next;
     this.#size--;
+    return true;
   }
 }
