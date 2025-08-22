@@ -80,7 +80,7 @@ export class LinkedList {
     while (counter < this.size) {
       // We are not using strict check as we want to allow users to enter any data type as value.
       if (currentNode.value == val) {
-        return currentNode;
+        return counter;
       }
       currentNode = currentNode.next;
       counter++;
@@ -90,19 +90,19 @@ export class LinkedList {
 
   findKey(key) {
     if (this.size === 0) {
-      return -2; // Not found, empty list
+      return false; // Not found, empty list
     }
     let currentNode = this.head;
     let counter = 0;
     while (counter < this.size) {
       // We are not using strict check as we want to allow users to enter any data type as value.
       if (currentNode.key == key) {
-        return currentNode;
+        return counter;
       }
       currentNode = currentNode.next;
       counter++;
     }
-    return -1; //Not found
+    return false; //Not found
   }
   at(index) {
     if (index < 0 || index >= this.size) {
@@ -167,6 +167,44 @@ export class LinkedList {
       currentNode = currentNode.next;
     }
     returnArray.push([currentNode.key,currentNode.value]);
+    return returnArray;
+  }
+
+    toArrayKeys() {
+    let returnArray = [];
+    let currentNode = this.head;
+    if (this.size === 0) {
+      return null;
+    }
+
+    if (this.size === 1) {
+      returnArray.push(currentNode.key);
+      return returnArray;
+    }
+    while (currentNode.next) {
+      returnArray.push(currentNode.key);
+      currentNode = currentNode.next;
+    }
+    returnArray.push(currentNode.key);
+    return returnArray;
+  }
+
+    toArrayValue() {
+    let returnArray = [];
+    let currentNode = this.head;
+    if (this.size === 0) {
+      return null;
+    }
+
+    if (this.size === 1) {
+      returnArray.push(currentNode.value);
+      return returnArray;
+    }
+    while (currentNode.next) {
+      returnArray.push(currentNode.value);
+      currentNode = currentNode.next;
+    }
+    returnArray.push(currentNode.value);
     return returnArray;
   }
 

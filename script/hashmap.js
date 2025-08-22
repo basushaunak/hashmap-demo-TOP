@@ -72,20 +72,40 @@ class HashMap {
       currentNode.value === value;
       console.log(`Value of ${key} updated with ${value}`);
       return true;
+    } else {
+      this.hashTable[index].append(key, value);
+      return true;
     }
-    this.hashTable[index].append(key,value);
-    return false;
   }
 
   //get(key) takes one argument as a key and returns the value that is assigned to this key.
   // If a key is not found, return null.
   get(key) {
+    let index = this.#hash(key, this.#capacity);
+    if (
+      this.hashTable[index] === undefined ||
+      this.hashTable[index].size === 0
+    ) {
+      return null;
+    }
+    let node = null;
+    let idx = this.hashTable[index].findKey(key);
+    if (idx) {
+      node = this.hashTable[index].at(idx);
+    }
+    if (node) {
+      return node.value;
+    }
     return null;
   }
 
   //has(key) takes a key as an argument and returns true or false based on whether or not the
   // key is in the hash map.
   has(key) {
+    let index = this.#hash(key, this.#capacity);
+    if (this.hashTable[index].findKey(key)) {
+      return true;
+    }
     return false;
   }
 
@@ -93,32 +113,64 @@ class HashMap {
   // remove the entry with that key and return true. If the key isn’t in the hash map, it
   // should return false.
   remove(key) {
+    let index = this.#hash(key, this.#capacity);
+    let idx = this.hashTable[index].findKey(key);
+    if (idx) {
+      return this.hashTable[index].removeAt(idx);
+    }
     return false;
   }
 
   //length() returns the number of stored keys in the hash map.
   length() {
-    return 0;
+    let size = 0;
+    for (let i = 0; i < this.#capacity; i++) {
+      if (this.hashTable[i]) {
+        size += this.hashTable[i].size;
+      }
+    }
+    return size;
   }
 
   //clear() removes all entries in the hash map.
   clear() {
-    return false;
+    for (let i = 0; i < this.#capacity; i++) {
+      this.hashTable[i] = undefined;
+    }
+    return true;
   }
 
   //keys() returns an array containing all the keys inside the hash map.
   keys() {
-    return false;
+    let masterArray = [];
+    for (let i = 0; i < this.#capacity; i++) {
+      if (this.hashTable[i]) {
+        masterArray.push(...this.hashTable[i].toArrayKeys());
+      }
+    }
+    return masterArray;
   }
 
   //values() returns an array containing all the values.
   values() {
-    return false;
+    let masterArray = [];
+    for (let i = 0; i < this.#capacity; i++) {
+      if (this.hashTable[i]) {
+        masterArray.push(...this.hashTable[i].toArrayValues());
+      }
+    }
+    return masterArray;
   }
 
   //entries() returns an array that contains each key, value pair. Example: [[firstKey, firstValue]
   // , [secondKey, secondValue]]
   entries() {
-    return false;
+    let masterArray = [];
+    for (let i = 0; i < this.#capacity; i++) {
+      if (this.hashTable[i]) {
+        masterArray.push(...this.hashTable[i].toArray());
+      }
+    }
+    return masterArray;
   }
 }
