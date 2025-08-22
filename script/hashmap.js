@@ -1,6 +1,6 @@
 import { LinkedList } from "./linkedlist.js";
 
-class HashMap {
+export class HashMap {
   #load = 0;
   #capacity;
   #criticalLoad = 0; //critical load % as a fraction, which can be determined by user
