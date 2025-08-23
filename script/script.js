@@ -1,24 +1,15 @@
 // JS Scripts
 import { HashMap } from "./hashmap.js";
+import { getRandomPeople } from "./getrandompeople.js";
+
 window.onload = () => {
+  const MAX_SIZE = 500;
   let test = new HashMap();
-  test.set("apple", "red");
-  test.set("banana", "yellow");
-  test.set("carrot", "orange");
-  test.set("dog", "brown");
-  test.set("elephant", "gray");
-  test.set("frog", "green");
-  test.set("grape", "purple");
-  test.set("hat", "black");
-  test.set("ice cream", "white");
-  test.set("jacket", "blue");
-  test.set("kite", "pink");
-  test.set("lion", "golden");
-  console.log(test);
-  test.set("frog", "blue");
-  test.set("dog", "black");
-  test.set("ice cream", "chocolate");
-  test.set('moon', 'silver')
+  getRandomPeople(MAX_SIZE).then(list=>{
+  for(let i = 0;i<MAX_SIZE;i++){
+    test.set(list[i].key,list[i].value);
+  }
+  });
   console.log(test);
 
 };
